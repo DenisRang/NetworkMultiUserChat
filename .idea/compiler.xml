@@ -6,6 +6,8 @@
       <module name="ChatConsoleJavaClient_test" target="1.8" />
       <module name="ChatServer_main" target="1.8" />
       <module name="ChatServer_test" target="1.8" />
+      <module name="NetworkMultiUserChat_main" target="1.8" />
+      <module name="NetworkMultiUserChat_test" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>
