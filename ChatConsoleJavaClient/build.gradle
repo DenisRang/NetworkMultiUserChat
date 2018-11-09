@@ -1,0 +1,24 @@
+plugins {
+    id 'java'
+    id 'application'
+}
+
+version 'unspecified'
+
+sourceCompatibility = 1.8
+
+mainClassName = 'Simple'
+
+task runSimple(dependsOn: 'classes', type: JavaExec) {
+    main = 'Simple'
+    classpath = sourceSets.main.runtimeClasspath
+    args 'myarg1'
+    systemProperty 'simple.message', 'Hello '
+}
+
+defaultTasks 'runSimple'
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+    compile project(':ChatServer')
+}

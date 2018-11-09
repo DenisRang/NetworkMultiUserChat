@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/ChatConsoleJavaClient.iml" filepath="$PROJECT_DIR$/.idea/modules/ChatConsoleJavaClient.iml" group="ChatConsoleJavaClient" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/ChatConsoleJavaClient/ChatConsoleJavaClient_main.iml" filepath="$PROJECT_DIR$/.idea/modules/ChatConsoleJavaClient/ChatConsoleJavaClient_main.iml" group="ChatConsoleJavaClient" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/ChatConsoleJavaClient/ChatConsoleJavaClient_test.iml" filepath="$PROJECT_DIR$/.idea/modules/ChatConsoleJavaClient/ChatConsoleJavaClient_test.iml" group="ChatConsoleJavaClient" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/ChatServer.iml" filepath="$PROJECT_DIR$/.idea/modules/ChatServer.iml" group="ChatServer" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/ChatServer/ChatServer_main.iml" filepath="$PROJECT_DIR$/.idea/modules/ChatServer/ChatServer_main.iml" group="ChatServer" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/ChatServer/ChatServer_test.iml" filepath="$PROJECT_DIR$/.idea/modules/ChatServer/ChatServer_test.iml" group="ChatServer" />
+      <module fileurl="file://$PROJECT_DIR$/NetworkMultiUserChat.iml" filepath="$PROJECT_DIR$/NetworkMultiUserChat.iml" />
+    </modules>
+  </component>
+</project>
