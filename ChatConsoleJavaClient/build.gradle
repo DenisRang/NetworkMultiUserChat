@@ -2,7 +2,6 @@
 task runClient1(dependsOn: 'classes', type: JavaExec) {
     main = 'Main'
     classpath = sourceSets.main.runtimeClasspath
-    args 'message from client 1'
 }
 
 task runClient2(dependsOn: 'classes', type: JavaExec) {
