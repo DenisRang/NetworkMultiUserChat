@@ -1,9 +1,9 @@
-package consumers;
+package runnable;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
 
-public class SingleClientWriter extends Thread {
+public class SingleClientWriter implements Runnable {
 
     private BufferedWriter writer;
     private String msg;
@@ -11,7 +11,6 @@ public class SingleClientWriter extends Thread {
     public SingleClientWriter(BufferedWriter writer, String msg) {
         this.writer = writer;
         this.msg = msg;
-        start();
     }
 
     @Override

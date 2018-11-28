@@ -1,4 +1,4 @@
-import api.ChatServerApiClient;
+import api.ChatServerApi;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -6,34 +6,38 @@ import java.io.InputStreamReader;
 
 public class SendMsg implements Runnable {
 
-    private ChatServerApiClient apiClient;
-    private String argument;
+    private ChatServerApi apiClient;
+    private BufferedReader readerConsole;
 
-    public SendMsg(ChatServerApiClient apiClient, String argument) {
+    public SendMsg(ChatServerApi apiClient) {
         this.apiClient = apiClient;
-        this.argument = argument;
+        readerConsole = new BufferedReader(new InputStreamReader(System.in));
     }
 
     @Override
     public void run() {
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(System.in))) {
-            while (true) {
+        try {
+            while (!Thread.currentThread().isInterrupted()) {
                 try {
-                    Thread.sleep(2000);
-                } catch (InterruptedException e) {
+                    String message = readerConsole.readLine();
+                    apiClient.sendMsg(message);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    return;
+                }
+            }
+        } finally {
+            try {
+                apiClient.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    readerConsole.close();
+                } catch (IOException e) {
                     e.printStackTrace();
                 }
-                String message = null;
-                if (argument == null) {
-                    System.out.println("Enter message:");
-                    message = reader.readLine();
-                } else {
-                    message = argument;
-                }
-                apiClient.sendMsg(message);
             }
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 }

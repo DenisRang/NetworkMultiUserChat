@@ -2,5 +2,5 @@ plugins {
     id 'application'
 }
 
-mainClassName = 'server.ServerTest'
+mainClassName = 'server.ServerMain'
 

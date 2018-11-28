@@ -6,6 +6,8 @@ public interface ChatServerApi {
 
     void sendMsg(String message) throws IOException;
 
-    String getMsg();
+    String getMsg() throws IOException;
+
+    void close() throws IOException;
 
 }

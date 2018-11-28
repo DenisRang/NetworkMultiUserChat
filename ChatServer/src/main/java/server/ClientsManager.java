@@ -1,4 +1,6 @@
-package consumers;
+package server;
+
+import runnable.SingleClientWriter;
 
 import java.io.*;
 import java.net.Socket;
@@ -6,6 +8,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class ClientsManager {
 
@@ -15,19 +19,18 @@ public class ClientsManager {
     private SimpleDateFormat dateFormatter = new SimpleDateFormat("HH:mm:ss");
     private Date currentTime;
     private String formattedTime;
+    ExecutorService clientWriterService = Executors.newCachedThreadPool();
 
-    public void addClient(Socket clientSocket) throws IOException {
+    public synchronized void addClient(Socket clientSocket) throws IOException {
         sockets.add(clientSocket);
         readers.add(new BufferedReader(new InputStreamReader(clientSocket.getInputStream())));
         writers.add(new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream())));
     }
 
-    public void removeClient(Socket clientSocket) {
+    public synchronized void removeClient(Socket clientSocket) {
         int index = sockets.indexOf(clientSocket);
         try {
             sockets.get(index).close();
-            readers.get(index).close();
-            writers.get(index).close();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -42,12 +45,12 @@ public class ClientsManager {
             currentTime = new Date();
             formattedTime = dateFormatter.format(currentTime);
             String msgWithSender = String.format("(%s) Client %d:  %s", formattedTime, indexSender, msg);
-            new SingleClientWriter(writer, msgWithSender);
+            sendMsgToClient(writer, msgWithSender);
         }
     }
 
-    public List<Socket> getClients() {
-        return sockets;
+    public void sendMsgToClient(BufferedWriter writer, String msg) {
+        clientWriterService.submit(new SingleClientWriter(writer, msg));
     }
 
     public BufferedReader getClientReader(Socket clientSocket) {

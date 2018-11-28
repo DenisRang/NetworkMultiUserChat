@@ -1,21 +1,23 @@
-package consumers;
+package runnable;
+
+import server.ClientsManager;
 
 import java.io.BufferedWriter;
 
-public class Factorial extends Thread {
+public class Factorial implements Runnable {
+    private ClientsManager clientsManager;
     private BufferedWriter writer;
     private int value;
 
-    public Factorial(BufferedWriter writer, int value) {
+    public Factorial(ClientsManager clientsManager, BufferedWriter writer, int value) {
+        this.clientsManager = clientsManager;
         this.writer = writer;
         this.value = value;
-        start();
     }
 
     @Override
     public void run() {
-        super.run();
-        new SingleClientWriter(writer, String.valueOf(factorial(value)));
+        clientsManager.sendMsgToClient(writer, String.valueOf(factorial(value)));
     }
 
     public int factorial(int value) {
@@ -24,7 +26,7 @@ public class Factorial extends Thread {
             result *= i;
         }
         try {
-            Thread.sleep(30000);
+            Thread.sleep(10000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

@@ -1,22 +1,37 @@
+import api.ChatServerApi;
 import api.ChatServerApiClient;
+
+import java.io.IOException;
+import java.net.SocketException;
+import java.util.Timer;
 
 public class GetMsg implements Runnable {
 
-    private ChatServerApiClient apiClient;
+    private ChatServerApi apiClient;
 
-    public GetMsg(ChatServerApiClient apiClient) {
+    public GetMsg(ChatServerApi apiClient) {
         this.apiClient = apiClient;
     }
 
     @Override
     public void run() {
         String msg;
-        while (true) {
-            msg = apiClient.getMsg();
-            if (msg != null) {
-                System.out.println(msg);
+        try {
+            while (!Thread.currentThread().isInterrupted()) {
+                try {
+                    msg = apiClient.getMsg();
+                    System.out.println(msg);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    return;
+                }
+            }
+        } finally {
+            try {
+                apiClient.close();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
-
     }
 }

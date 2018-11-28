@@ -1,8 +1,10 @@
-package consumers;
+package runnable;
+
+import server.ClientsManager;
 
 import java.io.BufferedWriter;
 
-public class AllClientWriter extends Thread {
+public class AllClientWriter implements Runnable {
 
     private ClientsManager clientsManager;
     private BufferedWriter senderWriter;
@@ -12,7 +14,6 @@ public class AllClientWriter extends Thread {
         this.clientsManager = clientsManager;
         this.senderWriter = senderWriter;
         this.msg = msg;
-        start();
     }
 
     @Override
