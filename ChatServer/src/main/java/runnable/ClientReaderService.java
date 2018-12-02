@@ -1,17 +1,12 @@
 package runnable;
 
-import plugins.Factorial;
-import plugins.PluginEngine;
 import server.ClientsManager;
+import server.PluginEngine;
 
 import java.io.*;
 import java.net.Socket;
 
 public class ClientReaderService implements Runnable {
-    private final String COMMAND_FACTORIAL = "факториал";
-    private final String COMMAND_POWER = "степень";
-    private final String COMMAND_REPEAT = "повтори";
-    private final String COMMAND_COMMANDS = "команды";
     private ClientsManager clientsManager;
     private Socket socket;
     private BufferedReader reader;
@@ -35,9 +30,9 @@ public class ClientReaderService implements Runnable {
             try {
                 String msg = reader.readLine();
                 if (isCommand(msg)) {
-                    int indexSpace = msg.indexOf(' ');
-                    String command = msg.substring(1, indexSpace);
-                    String arguments = msg.substring(indexSpace + 1);
+                    int indexEndOfCommand = (msg.indexOf(' ') != -1) ? msg.indexOf(' ') : msg.length();
+                    String command = msg.substring(1, indexEndOfCommand);
+                    String arguments = (indexEndOfCommand != msg.length()) ? msg.substring(indexEndOfCommand + 1) : null;
                     PluginEngine.executeForClient(clientsManager, writer, command, arguments);
                 } else {
                     new Thread(new AllClientWriter(clientsManager, writer, msg)).start();

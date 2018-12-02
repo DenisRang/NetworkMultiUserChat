@@ -1,6 +1,4 @@
-package plugins;
-
-import server.ClientsManager;
+package server;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -15,8 +13,8 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 public class PluginEngine {
+    private static final String COMMAND_COMMANDS = "commands";
     private static String pluginPath;
-    // private static PluginLoader loader;
     private static String[] pluginNames;
 
     public PluginEngine(String pluginPath) {
@@ -25,11 +23,11 @@ public class PluginEngine {
     }
 
     public static void executeForClient(ClientsManager clientsManager, BufferedWriter writer, String commandName, String args) {
+        StringBuilder commands = new StringBuilder();
         for (String pluginName : pluginNames) {
             try {
                 JarFile jarFile = new JarFile(pluginPath + '\\' + pluginName);
                 Enumeration<JarEntry> e = jarFile.entries();
-
                 URL[] urls = {new URL("jar:file:" + pluginPath + '\\' + pluginName + "!/")};
                 URLClassLoader cl = URLClassLoader.newInstance(urls);
 
@@ -40,51 +38,46 @@ public class PluginEngine {
                     }
                     // -6 because of .class
                     String className = je.getName().substring(0, je.getName().length() - 6);
-
                     className = className.replace('/', '.');
                     Class c = cl.loadClass(className);
-                    Method getCommandNameMethod = c.getDeclaredMethod("getCommandName");
-                    Method executeMethod = c.getDeclaredMethod("execute", new Class[]{String.class});
                     if ("Plugin".equals(className)) {
                         continue;
                     }
+
                     Object object = c.newInstance();
-                    String commandNameTemp = (String) getCommandNameMethod.invoke(object, null);
-                    if (commandNameTemp.equals(commandName)) {
+                    Method getCommandNameMethod = c.getDeclaredMethod("getCommandName");
+                    String commandNameFromClass = (String) getCommandNameMethod.invoke(object, null);
+                    if (COMMAND_COMMANDS.equals(commandName)) {
+                        commands.append(String.format(" - %s\n", commandNameFromClass));
+                        continue;
+                    }
+
+                    Method executeMethod = c.getDeclaredMethod("execute", new Class[]{String.class});
+                    if (commandNameFromClass.equals(commandName)) {
                         new Thread(() -> {
                             try {
                                 clientsManager.sendMsgToClient(writer, String.valueOf(executeMethod.invoke(object, args)));
-                            } catch (IllegalAccessException e1) {
-                                e1.printStackTrace();
-                            } catch (InvocationTargetException e1) {
+                            } catch (Exception e1) {
                                 e1.printStackTrace();
                             }
                         }).start();
                         return;
                     }
                 }
-
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            } catch (NoSuchMethodException e) {
-                e.printStackTrace();
-            } catch (InvocationTargetException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (InstantiationException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
+        new Thread(() -> {
+            try {
+                clientsManager.sendMsgToClient(writer, commands.toString());
+            } catch (Exception e1) {
+                e1.printStackTrace();
+            }
+        }).start();
     }
 
     private void init() {
-        //  loader = new PluginLoader(pluginPath, ClassLoader.getSystemClassLoader());
-        //Получаем список доступных модулей.
         File dir = new File(pluginPath);
         pluginNames = dir.list();
     }

@@ -1,8 +1,8 @@
-package plugins;
+package server;
 
 public interface Plugin {
 
-    public Object execute(Object ... args);
+    public Object execute(Object... args);
 
     public String getCommandName();
 
