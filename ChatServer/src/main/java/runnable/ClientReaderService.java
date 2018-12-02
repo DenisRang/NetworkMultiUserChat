@@ -36,9 +36,9 @@ public class ClientReaderService implements Runnable {
                 String msg = reader.readLine();
                 if (isCommand(msg)) {
                     int indexSpace = msg.indexOf(' ');
-                    int argument = Integer.valueOf(msg.substring(indexSpace + 1));
                     String command = msg.substring(1, indexSpace);
-                    PluginEngine.executeForClient(clientsManager, writer, command, argument);
+                    String arguments = msg.substring(indexSpace + 1);
+                    PluginEngine.executeForClient(clientsManager, writer, command, arguments);
                 } else {
                     new Thread(new AllClientWriter(clientsManager, writer, msg)).start();
                 }
