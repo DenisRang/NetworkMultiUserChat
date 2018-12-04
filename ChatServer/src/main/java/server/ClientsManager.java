@@ -1,5 +1,7 @@
 package server;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import runnable.SingleClientWriter;
 
 import java.io.*;
@@ -13,6 +15,7 @@ import java.util.concurrent.Executors;
 
 public class ClientsManager {
 
+    private static final Log logger = LogFactory.getLog(ClientsManager.class);
     private List<Socket> sockets = new ArrayList<>();
     private List<BufferedReader> readers = new ArrayList<>();
     private List<BufferedWriter> writers = new ArrayList<>();
@@ -32,11 +35,12 @@ public class ClientsManager {
         try {
             sockets.get(index).close();
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error(e);
         }
         sockets.remove(index);
         readers.remove(index);
         writers.remove(index);
+        logger.info(String.format("Client %d disconnected", index));
     }
 
     public synchronized void retransmitToAllClients(BufferedWriter senderWriter, String msg) {
