@@ -1,12 +1,16 @@
 package runnable;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import server.ClientsManager;
 import server.PluginEngine;
+import server.ServerMain;
 
 import java.io.*;
 import java.net.Socket;
 
 public class ClientReaderService implements Runnable {
+    private static final Log logger = LogFactory.getLog(ServerMain.class);
     private ClientsManager clientsManager;
     private Socket socket;
     private BufferedReader reader;
@@ -20,7 +24,7 @@ public class ClientReaderService implements Runnable {
             reader = clientsManager.getClientReader(socket);
             writer = clientsManager.getClientWriter(socket);
         } catch (IOException e) {
-            e.printStackTrace();
+           logger.error(e);
         }
     }
 
@@ -38,7 +42,7 @@ public class ClientReaderService implements Runnable {
                     new Thread(new AllClientWriter(clientsManager, writer, msg)).start();
                 }
             } catch (IOException e) {
-                e.printStackTrace();
+                logger.error(e);
                 clientsManager.removeClient(socket);
                 return;
             }

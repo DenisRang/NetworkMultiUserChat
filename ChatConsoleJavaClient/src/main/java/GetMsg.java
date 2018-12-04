@@ -1,11 +1,14 @@
 import api.ChatServerApi;
 import api.ChatServerApiClient;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.io.IOException;
 import java.net.SocketException;
 import java.util.Timer;
 
 public class GetMsg implements Runnable {
+    private static final Log logger = LogFactory.getLog(GetMsg.class);
 
     private ChatServerApi apiClient;
 
@@ -20,9 +23,10 @@ public class GetMsg implements Runnable {
             while (!Thread.currentThread().isInterrupted()) {
                 try {
                     msg = apiClient.getMsg();
+                    logger.info(String.format("Client get a new message from server: %s", msg));
                     System.out.println(msg);
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    logger.warn("Process of getting messages from the server was stopped");
                     return;
                 }
             }
@@ -30,7 +34,7 @@ public class GetMsg implements Runnable {
             try {
                 apiClient.close();
             } catch (IOException e) {
-                e.printStackTrace();
+                logger.error(e.getMessage());
             }
         }
     }

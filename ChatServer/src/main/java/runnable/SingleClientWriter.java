@@ -1,9 +1,14 @@
 package runnable;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import server.PluginEngine;
+
 import java.io.BufferedWriter;
 import java.io.IOException;
 
 public class SingleClientWriter implements Runnable {
+    private static final Log logger = LogFactory.getLog(SingleClientWriter.class);
 
     private BufferedWriter writer;
     private String msg;
@@ -20,7 +25,7 @@ public class SingleClientWriter implements Runnable {
                 writer.write(msg + '\n');
                 writer.flush();
             } catch (IOException e) {
-                e.printStackTrace();
+                logger.error(e);
             }
         }
     }

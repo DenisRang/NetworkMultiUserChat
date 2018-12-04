@@ -1,5 +1,8 @@
 package server;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
@@ -13,7 +16,9 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 public class PluginEngine {
+    private static final Log logger = LogFactory.getLog(PluginEngine.class);
     private static final String COMMAND_COMMANDS = "commands";
+    private static final String INVALID_COMMAND_MESSAGE = "Не правильно введена команда!";
     private static String pluginPath;
     private static String[] pluginNames;
 
@@ -58,21 +63,25 @@ public class PluginEngine {
                             try {
                                 clientsManager.sendMsgToClient(writer, String.valueOf(executeMethod.invoke(object, args)));
                             } catch (Exception e1) {
-                                e1.printStackTrace();
+                                logger.error(e1);
                             }
                         }).start();
                         return;
                     }
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                logger.error(e);
             }
         }
         new Thread(() -> {
             try {
-                clientsManager.sendMsgToClient(writer, commands.toString());
-            } catch (Exception e1) {
-                e1.printStackTrace();
+                if (COMMAND_COMMANDS.equals(commandName)) {
+                    clientsManager.sendMsgToClient(writer, commands.toString());
+                } else {
+                    clientsManager.sendMsgToClient(writer, INVALID_COMMAND_MESSAGE);
+                }
+            } catch (Exception e) {
+                logger.error(e);
             }
         }).start();
     }
